@@ -31,24 +31,21 @@ function getOpenCells(boardState){
 }
 
 function calculateMove(boardState, currMark){
-    //terminal conditions
+
     let availableMoves = getOpenCells(boardState);
-    // player has won {-1}
+
     if (isWinner(boardState, playerMarker)){
         return {score: -1, index: null}
     }
-    // computer has won {+1}
     if (isWinner(boardState, compMarker)){
         return {score: 1, index: null}
     }
-    // no moves available/draw {0}
     if (!availableMoves.length){
         return {score: 0, index: null}
     }
 
-    // create testPlay array
     let testOutcomes = []
-    // iterate over available cells
+
     for (let i=0; i < availableMoves.length; i++){
         let currTest = {score: 0, index: availableMoves[i]}
         boardState[currTest.index] = currMark;
