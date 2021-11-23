@@ -20,7 +20,6 @@ function isWinner(boardState, marker){
         let a, b, c;
         [a, b, c] = win
         if (boardState[a] === marker && boardState[b] === marker && boardState[c] === marker){
-            console.log(marker, "is the winner");
             return true
         }
     }
@@ -31,8 +30,53 @@ function getOpenCells(boardState){
     return boardState.filter(cell => typeof cell === "number");
 }
 
-function calculateMove(boardState, marker){
+function calculateMove(boardState, currMark){
+    //terminal conditions
+    let availableMoves = getOpenCells(boardState);
+    // player has won {-1}
+    if (isWinner(boardState, playerMarker)){
+        return {score: -1, index: null}
+    }
+    // computer has won {+1}
+    if (isWinner(boardState, compMarker)){
+        return {score: 1, index: null}
+    }
+    // no moves available/draw {0}
+    if (!availableMoves.length){
+        return {score: 0, index: null}
+    }
 
+    // create testPlay array
+    let testOutcomes = []
+    // iterate over available cells
+    for (let i=0; i < availableMoves.length; i++){
+        let currTest = {score: 0, index: availableMoves[i]}
+        boardState[currTest.index] = currMark;
+        currTest.score = calculateMove(boardState, currMark === compMarker ? playerMarker : compMarker).score
+        boardState[currTest.index] = currTest.index
+        testOutcomes.push(currTest)
+    }
+    let bestPlay;
+    if (currMark === compMarker){
+        let bestScore = -Infinity;
+        for (let test of testOutcomes){
+            if (test.score > bestScore){
+                bestScore = test.score;
+                bestPlay = test;
+            } 
+        }
+    }
+    if (currMark === playerMarker){
+        let bestScore = Infinity;
+        for (let test of testOutcomes){
+            if (test.score < bestScore){
+                bestScore = test.score;
+                bestPlay = test;
+            }
+        }
+    }
+
+    return bestPlay
 }
 
 function Game(){
@@ -55,6 +99,14 @@ function Game(){
     }, [board])
 
     useEffect(() => {getStatus()}, [board, getStatus])
+    useEffect(() => {
+        if (currTurn === "computer"){
+            setTimeout(()=>{
+                let move = calculateMove(board, compMarker)
+                updateBoard(move.index);
+            }, 1000)
+        }
+    })
 
     function resetGame(){
         setBoard(Array.from(Array(9).keys()));
@@ -71,11 +123,9 @@ function Game(){
     }
 
     return <div>
-        <p>{currTurn}'s Turn</p>
-        {!gameStatus && <p>Game Over: {winner} wins!</p>}
+        {!gameStatus && <p>Game Over: {winner === "Draw" ? "It's a Draw" : `${winner} wins!`}</p>}
         <Board boardState={board} updateBoard={updateBoard} />
         <button onClick={() => resetGame()}>Reset</button>
-        <button onClick={() => getStatus()}>click me</button>
     </div>
  }
 
