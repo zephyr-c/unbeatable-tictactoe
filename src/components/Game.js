@@ -37,6 +37,28 @@ function calculateMove(boardState, marker){
 function Game(){
     const [board, setBoard] = useState(Array.from(Array(9).keys()));
     const [currTurn, setCurrTurn] = useState("player");
+    const [gameStatus, setGameStatus] = useState(true);
+    const [winner, setWinner] = useState(null);
+
+    function getStatus(){
+        if (isWinner(board, playerMarker)){
+            setWinner("Player");
+            setGameStatus(false);
+        }else if (isWinner(board, compMarker)){
+            setWinner("Computer");
+            setGameStatus(false);
+        }else if (!getOpenCells(board).length){
+            setWinner("Draw");
+            setGameStatus(false);
+        }
+    }
+
+    function resetGame(){
+        setBoard(Array.from(Array(9).keys()));
+        setCurrTurn("player");
+        setGameStatus(true);
+        setWinner(null)
+    }
 
     const updateBoard = (loc) => {
         let currMarker = currTurn === "player" ? playerMarker : compMarker;
@@ -45,8 +67,9 @@ function Game(){
     }
 
     return <div>
+        <p>{currTurn}'s Turn</p>
         <Board boardState={board} updateBoard={updateBoard} />
-        <button onClick={()=> setBoard(Array.from(Array(9).keys()))}>Reset</button>
+        <button onClick={() => resetGame()}>Reset</button>
     </div>
  }
 
