@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import Board from './Board'
 
 const playerMarker = "X"
@@ -19,7 +19,8 @@ function isWinner(boardState, marker){
     for (let win of possibleWins){
         let a, b, c;
         [a, b, c] = win
-        if (boardState[a] === boardState[b] === boardState[c] === marker){
+        if (boardState[a] === marker && boardState[b] === marker && boardState[c] === marker){
+            console.log(marker, "is the winner");
             return true
         }
     }
@@ -40,7 +41,7 @@ function Game(){
     const [gameStatus, setGameStatus] = useState(true);
     const [winner, setWinner] = useState(null);
 
-    function getStatus(){
+    const getStatus = useCallback(()=>{
         if (isWinner(board, playerMarker)){
             setWinner("Player");
             setGameStatus(false);
@@ -51,7 +52,9 @@ function Game(){
             setWinner("Draw");
             setGameStatus(false);
         }
-    }
+    }, [board])
+
+    useEffect(() => {getStatus()}, [board, getStatus])
 
     function resetGame(){
         setBoard(Array.from(Array(9).keys()));
@@ -61,6 +64,7 @@ function Game(){
     }
 
     const updateBoard = (loc) => {
+        if (!gameStatus){return}
         let currMarker = currTurn === "player" ? playerMarker : compMarker;
         setCurrTurn(currTurn === "player" ? "computer" : "player")
         setBoard(board.map(cell => cell === loc ? currMarker : cell))
@@ -68,8 +72,10 @@ function Game(){
 
     return <div>
         <p>{currTurn}'s Turn</p>
+        {!gameStatus && <p>Game Over: {winner} wins!</p>}
         <Board boardState={board} updateBoard={updateBoard} />
         <button onClick={() => resetGame()}>Reset</button>
+        <button onClick={() => getStatus()}>click me</button>
     </div>
  }
 
