@@ -129,7 +129,7 @@ function Game(){
             <div className="choiceButton" onClick={()=> setCurrTurn("computer")}>You go First</div>
             </>
             }
-            {currTurn && <button onClick={() => resetGame()}>Reset</button>}
+            {currTurn && <div className="choiceButton" id="reset" onClick={() => resetGame()}>Reset</div>}
         </div>
     </div>
  }

@@ -39,9 +39,14 @@
   border: 3px solid green;
   border-radius: 20px;
   height: 30px;
+  width: 100px;
   text-align: center;
   padding-top: 10px;
   cursor: pointer;
+}
+
+#reset {
+  border: 3px solid red;
 }
 
 #optionsBar {
