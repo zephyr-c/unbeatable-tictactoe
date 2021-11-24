@@ -40,13 +40,17 @@
   border-radius: 20px;
   height: 30px;
   width: 100px;
+  background-color: #dadbd0;
   text-align: center;
+  font-weight: bold;
+  color: blue;
   padding-top: 10px;
   cursor: pointer;
 }
 
 #reset {
   border: 3px solid red;
+  color: black;
 }
 
 #optionsBar {
