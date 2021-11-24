@@ -78,7 +78,7 @@ function calculateMove(boardState, currMark){
 
 function Game(){
     const [board, setBoard] = useState(Array.from(Array(9).keys()));
-    const [currTurn, setCurrTurn] = useState("player");
+    const [currTurn, setCurrTurn] = useState(null);
     const [gameStatus, setGameStatus] = useState(true);
     const [winner, setWinner] = useState(null);
 
@@ -107,13 +107,13 @@ function Game(){
 
     function resetGame(){
         setBoard(Array.from(Array(9).keys()));
-        setCurrTurn("player");
+        setCurrTurn(null);
         setGameStatus(true);
-        setWinner(null)
+        setWinner(null);
     }
 
     const updateBoard = (loc) => {
-        if (!gameStatus){return}
+        if (!gameStatus || !currTurn){return}
         let currMarker = currTurn === "player" ? playerMarker : compMarker;
         setCurrTurn(currTurn === "player" ? "computer" : "player")
         setBoard(board.map(cell => cell === loc ? currMarker : cell))
@@ -122,7 +122,15 @@ function Game(){
     return <div>
         {!gameStatus && <p>Game Over: {winner === "Draw" ? "It's a Draw" : `${winner} wins!`}</p>}
         <Board boardState={board} updateBoard={updateBoard} />
-        <button onClick={() => resetGame()}>Reset</button>
+        
+        <div id="optionsBar">
+            {!currTurn &&<>
+            <div className="choiceButton" onClick={()=> setCurrTurn("player")}>I'll go First</div>
+            <div className="choiceButton" onClick={()=> setCurrTurn("computer")}>You go First</div>
+            </>
+            }
+            {currTurn && <button onClick={() => resetGame()}>Reset</button>}
+        </div>
     </div>
  }
 
